@@ -24,16 +24,21 @@ class ActionPool:
             next(csv_reader)
             for row in csv_reader:
                 name, cost, return_on_investment = row
-                return_on_investment = return_on_investment.replace('%', '').strip()
-                action = Action(name, float(cost), float(return_on_investment))
-                actions_list.append(action)
+                try:
+                    cost = float(cost)
+                    return_on_investment = float(return_on_investment.replace('%', '').strip())
+                    if cost > 0 and return_on_investment > 0:
+                        action = Action(name, cost, return_on_investment)
+                        actions_list.append(action)
+                except ValueError:
+                    print(f"Skipping invalid entry: {row}")
         return actions_list
 
 
 class InvestmentCalculator:
     @classmethod
     def sort_actions(cls, action_list):
-        sorted_actions = sorted(action_list, key=lambda action: action.benefit, reverse=True)
+        sorted_actions = sorted(action_list, key=lambda action: action.return_on_investment, reverse=True)
         return sorted_actions
 
     @ classmethod
@@ -48,13 +53,15 @@ class InvestmentCalculator:
                 investment_benefit += action.benefit
                 combination.append(action)
 
+        total_cost = sum(action.cost for action in combination)
+        print(f"Total cost: {total_cost}")
+        print(f"Total benefit: {investment_benefit}")
+
         for action in combination:
             print(f"{action.name} {action.cost} {action.benefit}")
 
-        print(f"Total benefit: {investment_benefit}")
 
-
-action_pool = ActionPool("actions_list.csv")
+action_pool = ActionPool("dataset_1.csv")
 actions = action_pool.load_actions()
 sorted_actions_list = InvestmentCalculator.sort_actions(actions)
 InvestmentCalculator.generate_combination(sorted_actions_list)
