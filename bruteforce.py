@@ -54,8 +54,8 @@ class ManageResults:
 
     @classmethod
     def display_results(cls, results):
-        print("Top 20 Investments by total Benefit:")
-        for i, (investment, benefit) in enumerate(results[:20], 1):
+        print("Top 5 Investments by total Benefit:")
+        for i, (investment, benefit) in enumerate(results[:5], 1):
             print(f"{i}. Total Benefit= {benefit}")
             print(f"{len(investment)}")
             for action in investment:
